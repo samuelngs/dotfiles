@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# randomize MAC address before connecting to wifi or ethernet
+#
+# This script should always be run in if-pre-up.d, but unfortunately
+# NetworkManager does not run if-pre-up.d scripts before it sets up a network
+# connection (https://bugzilla.gnome.org/show_bug.cgi?id=387832).
+# if-post-down.d scripts are run, so there is a symlink to this script
+# there. That means when running network config from the terminal, macchanger
+# will be run twice, but it'll only be run in if-post-down.d when using
+# NetworkManager.
+
+LOGFILE=/var/log/secure_mac.log
+
+MACFILE=/etc/default/secure_$IFACE
+MACADDR=
+
+if [ ! -f $MACFILE ]; then
+    /usr/bin/macchanger -ar $IFACE && /sbin/ifconfig $IFACE | /bin/grep -i HWaddr | /usr/bin/awk '{print $5}' > $MACFILE
+fi
+
+MACADDR=`cat $MACFILE`
+
+echo "IFACE = $IFACE, MAC = $MACADDR" >> $LOGFILE
+
+if [ "$IFACE" = lo ]; then
+    echo "ignoring loopback" >> $LOGFILE
+    exit 0
+fi
+
+echo "$IFACE >>> $MACADDR" >> $LOGFILE 2>&1
+
+/sbin/dhclient -r "$IFACE" >> $LOGFILE 2>&1
+/usr/bin/macchanger --mac="$MACADDR" "$IFACE" >> $LOGFILE 2>&1
+

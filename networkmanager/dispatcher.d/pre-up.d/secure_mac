@@ -1,5 +1,0 @@
-#!/bin/bash
-
-/sbin/ip link set dev $1 down
-/usr/bin/macchanger -e "$1"
-/sbin/ip link set dev $1 up

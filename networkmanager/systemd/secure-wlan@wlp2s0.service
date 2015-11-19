@@ -1,0 +1,12 @@
+[Unit]
+Description=macchanger on %I
+Wants=network-pre.target
+Before=network-pre.target
+BindsTo=sys-subsystem-net-devices-%i.device
+After=sys-subsystem-net-devices-%i.device
+
+[Service]
+ExecStart=/bin/bash -c "/sbin/dhclient -r %I && /usr/bin/macchanger -ar %I && /sbin/ifconfig %I | /bin/grep -i HWaddr | /usr/bin/awk '{print $5}' > /etc/default/secure_%I"
+
+[Install]
+WantedBy=multi-user.target
