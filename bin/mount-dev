@@ -1,0 +1,18 @@
+#!/bin/bash
+
+MOUNT_DISK=/dev/mapper/devsecure
+MOUNT_PATH=/mnt/devsecure
+
+if [ ! -d "$MOUNT_PATH" ]; then
+  sudo mkdir -p $MOUNT_PATH
+fi
+
+if mount | grep $MOUNT_PATH > /dev/null; then
+    cd $MOUNT_PATH
+else
+    if [ ! -L $MOUNT_DISK ]; then
+        sudo cryptsetup luksOpen /dev/sda devsecure
+    fi
+    sudo mount /dev/mapper/devsecure $MOUNT_PATH
+    cd $MOUNT_PATH
+fi

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+MOUNT_DISK=/dev/mapper/devsecure
+MOUNT_PATH=/mnt/devsecure
+
+if [ ! -L "$MOUNT_DISK" ]; then
+    echo "[ notice ] Disk is not found"
+else
+    lsof | grep "$MOUNT_PATH"
+    if mount | grep $MOUNT_PATH > /dev/null; then
+        echo "[ notice ] Disk is unmounting..."
+        sudo mount -o ro,remount $MOUNT_PATH
+        sudo umount -lf $MOUNT_PATH
+        sudo cryptsetup luksClose devsecure
+        echo "[ notice ] Disk is unmounted!"
+    else
+        sudo rm -rf $MOUNT_PATH
+    fi
+
+    cd /
+fi
+
