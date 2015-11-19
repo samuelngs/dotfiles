@@ -1,0 +1,13 @@
+scroll_up    j C-Up
+scroll_down  k C-Down
+scroll_left  l C-Left
+scroll_right h C-Right
+remove     q
+delete   C-d C-Delete
+toggle_filenames f
+zoom_in  C-Up J
+zoom_out C-Down K
+zoom_default d
+zoom_fit s
+save_image
+save_filelist
