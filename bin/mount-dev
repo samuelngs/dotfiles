@@ -33,6 +33,7 @@ else
     if [ ! -L "$MAPPER/$DISK_NAME" ]; then
         sudo cryptsetup --key-file "$MOUNT_PATH/$SECURE_NAME/$SECURE_BLOCK" luksOpen $DISK_DEVICE $DISK_NAME
     fi
+    lsof | grep "$MOUNT_PATH/$SECURE_NAME"
     if mount | grep "$MOUNT_PATH/$SECURE_NAME" > /dev/null; then
         sudo umount "$MOUNT_PATH/$SECURE_NAME"
         sudo cryptsetup luksClose $SECURE_NAME
