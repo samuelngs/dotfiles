@@ -1,18 +1,45 @@
 #!/bin/bash
 
-MOUNT_DISK=/dev/mapper/devsecure
-MOUNT_PATH=/mnt/devsecure
+. /usr/local/bin/env_dev
 
-if [ ! -d "$MOUNT_PATH" ]; then
-  sudo mkdir -p $MOUNT_PATH
+if [ ! -d "$MOUNT_PATH/$DISK_NAME" ]; then
+    sudo mkdir -p $MOUNT_PATH/$DISK_NAME
 fi
 
-if mount | grep $MOUNT_PATH > /dev/null; then
-    cd $MOUNT_PATH
+if mount | grep "$MOUNT_PATH/$DISK_NAME" > /dev/null; then
+    cd "$MOUNT_PATH/$DISK_NAME"
 else
-    if [ ! -L $MOUNT_DISK ]; then
-        sudo cryptsetup luksOpen /dev/sda devsecure
+    if [ ! -f "$SECURE_DEVICE" ]; then
+        echo "[error] Secure disk is missing"
+        return 1
     fi
-    sudo mount /dev/mapper/devsecure $MOUNT_PATH
-    cd $MOUNT_PATH
+    if mount | grep "$MOUNT_PATH/$SECURE_NAME" > /dev/null; then
+        echo "[secure] loading access key..."
+    else
+        if [ ! -L "$MAPPER/$SECURE_NAME" ]; then
+            sudo cryptsetup luksOpen $SECURE_DEVICE $SECURE_NAME
+        fi
+        if [ ! -d "$MOUNT_PATH/$SECURE_NAME" ]; then
+            sudo mkdir -p "$MOUNT_PATH/$SECURE_NAME"
+        fi
+        if [ -L "$MAPPER/$SECURE_NAME" ]; then
+            sudo mount "$MAPPER/$SECURE_NAME" "$MOUNT_PATH/$SECURE_NAME"
+        fi
+    fi
+    if [ ! -f "$MOUNT_PATH/$SECURE_NAME/$SECURE_BLOCK" ]; then
+        echo "[error] Secure block is missing"
+        return 1
+    fi
+    if [ ! -L "$MAPPER/$DISK_NAME" ]; then
+        sudo cryptsetup --key-file "$MOUNT_PATH/$SECURE_NAME/$SECURE_BLOCK" luksOpen $DISK_DEVICE $DISK_NAME
+    fi
+    if mount | grep "$MOUNT_PATH/$SECURE_NAME" > /dev/null; then
+        sudo umount "$MOUNT_PATH/$SECURE_NAME"
+        sudo cryptsetup luksClose $SECURE_NAME
+        sudo rm -rf "$MOUNT_PATH/$SECURE_NAME"
+    fi
+    if [ -L "$MAPPER/$DISK_NAME" ]; then
+        sudo mount "$MAPPER/$DISK_NAME" "$MOUNT_PATH/$DISK_NAME"
+    fi
+    cd "$MOUNT_PATH/$DISK_NAME"
 fi

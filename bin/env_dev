@@ -1,0 +1,12 @@
+
+MAPPER=/dev/mapper
+
+MOUNT_PATH=/mnt
+
+SECURE_NAME=secure
+SECURE_DEVICE=/secure
+SECURE_BLOCK=.encrypted/master
+
+DISK_NAME=devsecure
+DISK_DEVICE=/dev/sda
+
