@@ -1,0 +1,16 @@
+[global]
+    font = Terminus (TTF) 17
+    geometry = "450x20-20-50"
+    padding = 14
+    horizontal_padding = 18
+    separator_color = "#03151D"
+    separator_height = 1
+    transparency = 0
+    sort = yes
+    idle_threshold = 120
+
+[frame]
+    width = 2
+    color = "#000"
+    background = "#373513"
+    foreground = "#ffffff"
