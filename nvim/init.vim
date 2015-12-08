@@ -14,42 +14,23 @@ cmap w!! %!sudo tee > /dev/null %
 Plugin 'gmarik/Vundle.vim'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'tpope/vim-unimpaired'
-Plugin 'Lokaltog/vim-easymotion'
 Plugin 'scrooloose/nerdtree'
-Plugin 'mileszs/ack.vim'
 Plugin 'kien/ctrlp.vim'
-Plugin 'scrooloose/syntastic'
+Plugin 'benekastah/neomake'
 Plugin 'Lokaltog/vim-powerline'
 Plugin 'tomtom/tcomment_vim'
 Plugin 'tpope/vim-fugitive'
-Plugin 'ervandew/supertab'
-Plugin 'rust-lang/rust.vim'
-Plugin 'othree/html5.vim'
+Plugin 'fatih/vim-go'
+Plugin 'majutsushi/tagbar'
 Plugin 'Valloric/YouCompleteMe'
 
-" All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
-"
-" Brief help
-" :PluginList          - list configured plugins
-" :PluginInstall(!)    - install (update) plugins
-" :PluginSearch(!) foo - search (or refresh cache first) for foo
-" :PluginClean(!)      - confirm (or auto-approve) removal of unused plugins
-"
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
 
-"------------------------------------------------------------------------------
-" basic
-"
 set number
 set rnu
 set ruler          " show line and column number
 syntax enable
-"set encoding=utf-8
 set visualbell     " shut vim up
 set noerrorbells
 set history=1000
@@ -61,24 +42,15 @@ set smartcase
 set lazyredraw
 set notimeout
 
-"------------------------------------------------------------------------------
-" editing
-"
-"set showmatch      " Show matching brackets
-"set matchtime=5    " bracket blinking
 set showcmd        " show incomplete commands in lower right hand corner
 set showmode
 set hidden         " current buffer can be put to the background without writing to disk
 
-" folds
 set foldmethod=indent
 set foldnestmax=3
 set nofoldenable
 set clipboard=unnamedplus
 
-"------------------------------------------------------------------------------
-" whitespaces
-"
 set autoindent
 set smartindent
 set smarttab     " smarter tab levels
@@ -97,22 +69,18 @@ set listchars+=trail:·    " display trailing whitespaces with a dot
 set listchars+=extends:»  " right wrap
 set listchars+=precedes:« " left wrap
 
-"------------------------------------------------------------------------------
-" searching
-"
+set fillchars=vert:│
+autocmd ColorScheme * highlight VertSplit cterm=NONE ctermfg=Black ctermbg=NONE
+
 set hlsearch   " highlight searches
 set incsearch  " incremental searching
 set ignorecase " searches are case insensitive
 set smartcase  " unless there is one capital letter
 
-" scrolling
 set scrolloff=5
 set sidescrolloff=5
 set sidescroll=1
 
-"------------------------------------------------------------------------------
-" wild
-"
 set wildmode=list:longest
 set wildmenu
 set wildignore=*.o,*.out,*.obj,*.class
@@ -135,26 +103,19 @@ set wildignore+=*.gem
 set wildignore+=*/log/**
 set wildignore+=*/tmp/**
 set wildignore+=*/_vendor/**
+set wildignore+=*/github.com/**
+set wildignore+=*/golang.org/**
+set wildignore+=*/google.golang.org/**
+set wildignore+=*/gopkg.in/**
+set wildignore+=*/node_modules/**
 
-"------------------------------------------------------------------------------
-" backup & swap
-"
 set noswapfile
 set nobackup
 set nowb
 
-"------------------------------------------------------------------------------
-" Rust
-"
-" let g:racer_cmd = "/usr/local/src/racer/target/release/racer"
-" let $RUST_SRC_PATH="/usr/local/src/rust/src/"
-
-"persistent undo
 silent !mkdir ~/.vim/backups > /dev/null 2>&1
 set undodir=~/.vim/backups
 set undofile
-
-"colorscheme
 
 let g:solarized_termcolors=256
 let g:solarized_termtrans=1
@@ -164,10 +125,6 @@ set background=dark
 "silent! colorscheme hybrid
 colorscheme smyck
 
-"------------------------------------------------------------------------------
-" filetypes
-" https://raw.github.com/carlhuda/janus/master/janus/vim/core/before/plugin/filetypes.vim
-"
 function! s:setupWrapping()
   set wrap
   set linebreak
@@ -177,16 +134,13 @@ endfunction
 
 filetype plugin indent on " Turn on filetype plugins (:help filetype-plugin)
 
-" In Makefiles, use real tabs, not tabs expanded to spaces
 au FileType make set noexpandtab
 
-" make Python follow PEP8 ( http://www.python.org/dev/peps/pep-0008/ )
 au FileType python set softtabstop=4 tabstop=4 shiftwidth=4 textwidth=79
 
-" to tab highlight for go
 au FileType go set nolist textwidth=0
+autocmd FileType go :TagbarOpen
 
-" clean trailing spaces
 au BufWritePre * kz|:%s/\s\+$//e|'z
 
 " Remember last location in file, but not for commit messages.
@@ -208,6 +162,8 @@ endif
 " other settings
 "
 
+let g:ycm_register_as_syntastic_checker = 0
+
 " ack-vim
 let g:ackprg="ag --nogroup --nocolor --column"
 
@@ -215,6 +171,30 @@ let g:ackprg="ag --nogroup --nocolor --column"
 let g:syntastic_enable_signs=1
 let g:syntastic_quiet_messages = {'level': 'warnings'}
 let g:syntastic_auto_loc_list=2
+
+let NVIM_TUI_ENABLE_TRUE_COLOR=1
+let NVIM_TUI_ENABLE_CURSOR_SHAPE=1
+
+let g:neomake_make_modified=1
+autocmd! BufWritePost * Neomake
+
+let g:go_fmt_command = "goimports"
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+
+let g:tagbar_type_go = {
+    \ 'ctagstype': 'go',
+    \ 'kinds' : [
+        \'p:package',
+        \'f:function',
+        \'v:variables',
+        \'t:type',
+        \'c:const'
+    \]
+\}
 
 """ nerdtree
 let NERDTreeIgnore=['\.pyc$', '\.pyo$', '\.rbc$', '\.rbo$', '\.class$', '\.o$', '\~$']
@@ -309,10 +289,13 @@ nnoremap <leader>p :CtrlPClearCache<CR>
 nnoremap <leader>q :q!<CR>
 nnoremap <leader>r :wq<CR>
 nnoremap <leader>w :w<CR>
+nnoremap <leader>s :w !sudo tee % > /dev/null<CR>
 nnoremap <leader>x :x<CR>
 nnoremap <leader>z :Dispatch!<Space>
 nnoremap <leader>u :TComment<CR>
 nnoremap <leader>m :noh<CR>
+nnoremap <leader>o :Neomake<CR>
+nnoremap <leader>` :TagbarToggle<CR>
 nnoremap <leader>b :set rnu! rnu? <CR>
 
 " much more natural cursor movement when wrapping lines are present
@@ -331,6 +314,7 @@ imap <C-p> <ESC>:CtrlP<CR>
 " Bubble single lines
 nmap <C-k> [e
 nmap <C-j> ]e
+nmap <F8> :TagbarToggle<CR>
 
 " Bubble multiple lines
 vmap <C-k> [egv
