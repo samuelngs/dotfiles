@@ -25,18 +25,18 @@ URxvt.urgentOnBell: false
 *background: [80]#272605
 *foreground: [80]#C7C7C7
 *color0:#4A3637
-*color8:#4A3637
-*color1:#d17b49
-*color9:#d17b49
+*color1:#A00D00
 *color2:#7b8748
-*color10:#7b8748
-*color3:#af865a
-*color11:#af865a
+*color3:#D3CC00
 *color4:#535C5C
-*color12:#535C5C
 *color5:#775759
-*color13:#775759
 *color6:#6d715e
-*color14:#6d715e
 *color7:#c0b18b
+*color8:#4A3637
+*color9:#d17b49
+*color10:#7b8748
+*color11:#af865a
+*color12:#535C5C
+*color13:#775759
+*color14:#6d715e
 *color15:#c0b18b
