@@ -21,7 +21,7 @@ git clone https://github.com/VundleVim/Vundle.vim.git ~/.config/nvim/bundle/Vund
 # npm install -g n
 # n stable
 #
-# npm install -g typescript
+npm install -g typescript
 #
 # ./install.py --system-libclang --system-boost --clang-completer --omnisharp-completer --gocode-completer
 #
