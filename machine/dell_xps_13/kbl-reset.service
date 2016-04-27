@@ -1,0 +1,10 @@
+[Unit]
+Description=Reset XPS Keyboard Light
+After=network.target
+
+[Service]
+RemainAfterExit=yes
+ExecStart=/bin/bash -c "echo 0 | sudo tee /sys/class/leds/dell::kbd_backlight/brightness"
+
+[Install]
+WantedBy=multi-user.target
